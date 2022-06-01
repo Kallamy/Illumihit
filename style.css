@@ -1,0 +1,36 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+#universe {
+    position: relative;
+    background-image: url(src/images/bg.jpg);
+    background-size: cover;
+    width: 100vw;
+    height: 100vh;
+}
+
+.lumi {
+    position: absolute;
+    background-image: url(src/images/Illuminati.png);
+    background-size: contain;
+    width: 100px;
+    height: 100px;
+    left: 300px;
+    top: 400px;
+    transition: transform 1s;
+}
+
+.lumi.hit {
+    animation: hit 2s normal linear infinite;
+}
+
+/* ANIMATIONS */
+
+@keyframes hit { 
+    0%   {transform: scale(1)  rotate(0deg);}
+    25%  {transform: scale(.5) rotate(120deg);}
+    50%  {transform: scale(.25) rotate(240deg);}
+    100% {transform: scale(0) rotate(360deg);}
+}
+
