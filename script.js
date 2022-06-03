@@ -1,23 +1,32 @@
+//  seleciona a div que contêm os illuminatis
 const lumisContainer = document.querySelector(".lumis");
+// seleciona  todos os illuminatis
 let lumis = document.querySelectorAll(".lumi");
 let lumisObj = [];
 
+let score = 0;
+let hits_count = 0;
 
-insertLumi();
-insertLumi();
-insertLumi();
-insertLumi();
-insertLumi();
-insertLumi();
+let respawnTime = Math.floor((Math.random() * 3000) + 1500)
 
 
-update();
-for(let i=0;i<lumisObj.length;i++) {
+//insere o primeiro illuminati
+getIlluminati()
+insertLumi(illuminati)
+
+
+
+// percorre todos os illuminatis e movimenta eles de acordo com o tempo de cada um
+for (let i = 0; i < lumisObj.length; i++) {
     setInterval(() => {
         lumisObj[i].move();
         update();
-    }, lumisObj[i].escapeTime);
+        lumisObj[i].escapeTime = Math.floor((Math.random() * lumisObj[i].escapeLimits[1]) + lumisObj[i].escapeLimits[0])
+        lumisObj[i].respawnTime = Math.floor((Math.random() * lumisObj[i].respawnLimits[1]) + lumisObj[i].respawnLimits[0])
+    }, lumisObj[i].escapeTime)
 }
+
+// Atualizar as posições dos illuminatis na tela
 function update() {
     for(let i=0;i<lumisObj.length;i++) {
         let lumis = document.querySelectorAll(".lumi");
@@ -27,48 +36,33 @@ function update() {
         lumis[i].style.top = lumisObj[i].yPos + "px";
         lumis[i].style.width = lumisObj[i].size + "px";
         lumis[i].style.height = lumisObj[i].size + "px";
-        lumis[i].addEventListener("click", () => {
+        lumis[i].addEventListener("click", (event) => {
+            event.stopImmediatePropagation();
             lumis[i].classList.add("hit")
             lumisObj[i].canMove = false;
-            lumisObj[i].hit();
+            lumisObj[i].hit(i);
             setTimeout(() => {
                 lumis[i].classList.remove("hit")
-            }, 1500)
+            
+            }, lumisObj[i].respawnTime + 150)
+            
         })
        
         
     }
 }
 
-function insertLumi() {
+
+// Inserir um novo illuminati
+function insertLumi(lumi) {
     lumisContainer.innerHTML += "<div class='lumi'></div>";
+    lumisObj.push(lumi);
+}
 
-    lumisObj.push({
-        image: "src/images/Illuminati.png",
-        size: Math.floor((Math.random() * 200) + 50),
-        xPos: Math.floor(Math.random() * (window.innerWidth - 110)),
-        yPos: Math.floor(Math.random() * (window.innerHeight - 110)),
-        escapeTime: Math.floor((Math.random() * 3000) + 1500),
-        canMove:true,
-        move: function() {
-            if(this.canMove) {
-                this.xPos = Math.floor(Math.random() * (window.innerWidth - 110));
-                this.yPos = Math.floor(Math.random() * (window.innerHeight - 110));
-                this.size = Math.floor((Math.random() * 200) + 50);
-            }
-        },
-        hit: function() {
-            respawnTime = Math.floor((Math.random() * 3000) + 1500)
-            setTimeout(() => {
-                this.xPos = Math.floor(Math.random() * (-window.innerWidth ));
-                this.yPos = Math.floor(Math.random() * (-window.innerHeight ));
-
-                setTimeout(() => {
-                    this.canMove = true;
-                }, respawnTime)
-            }, 1200);
-        },
-    })
+// Remover um illuminati
+function removeLumi(index) {
+    lumisObj.splice(index, 1);
+    console.log("removeu!")
 }
 
 

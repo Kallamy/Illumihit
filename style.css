@@ -1,7 +1,9 @@
 * {
     padding: 0;
     margin: 0;
+    user-select: none; 
 }
+
 #universe {
     position: relative;
     background-image: url(src/images/bg.jpg);
@@ -21,7 +23,6 @@
     height: 100px;
     left: 300px;
     top: 400px;
-    transition: transform 1s;
 }
 
 .lumi.hit {
