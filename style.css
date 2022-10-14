@@ -26,7 +26,7 @@
 }
 
 .lumi.hit {
-    animation: hit 2s normal linear infinite;
+    animation: hit 1.5s normal linear infinite;
 }
 
 /* ANIMATIONS */
