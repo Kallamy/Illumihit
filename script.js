@@ -1,4 +1,13 @@
+var bgMusic = new Audio('src/sounds/bg_music.mp3');
 
+const shotSound = new Audio('src/sounds/shot.wav');
+const hitSound = new Audio('src/sounds/hit.wav');
+const escapeSound = new Audio('src/sounds/escape.wav');
+
+bgMusic.volume = 0.2;
+hitSound.volume = 1;
+
+bgMusic.play();
 //  seleciona a div que contêm os illuminatis
 const lumisContainer = document.querySelector(".lumis");
 // seleciona  todos os illuminatis
@@ -10,11 +19,11 @@ let lumis = [];
 let score = 0;
 let hits_count = 0;
 
-let quantity = 1;
+let quantity = 3;
 
 let canDraw = true;
 
-let insertionLimit = 20;
+let insertionLimit = 10;
 let insertionFloor = Math.floor((Math.random() * 47) + 3);
 let insertionFloorOffset = 0;
 let insertionPercent = Math.floor((Math.random() * 100));
@@ -28,16 +37,20 @@ let remotionChance = 60;
 let respawnTime = Math.floor((Math.random() * 3000) + 1500)
 
 drawLumis();
+
 //insere o primeiro illuminati
 function drawLumis() {
     //lumis = document.querySelectorAll(".lumi");
    
-    for(let q = 0; q < quantity; q++) {
+    document.getElementById("lumiCount").innerText = quantity;
+    
+    console.log("Desenhando....")
+    
+    lumisContainer.innerHTML = "";
+    lumisObj = []
 
-        if(q < insertionLimit) {
-            insertLumi()
-        }
-        
+    for(let q = 0; q < quantity; q++) {
+        insertLumi()
     }
         
    console.log("QUANTIDADE: "+quantity)
@@ -47,12 +60,8 @@ function drawLumis() {
     for(let i = 0; i < lumisObj.length; i++) {
 
         lumisObj[i].move();
-        
-       //update()
-        if(canDraw) {
-
-        }
     }
+    console.log(lumis)
 }
 update()
 runGame()
@@ -60,29 +69,36 @@ runGame()
 escape()
 function runGame() {
     
+    console.log("Rodou o jogo!")
     
     if(hits_count > insertionFloor + insertionFloorOffset) {
         insertionPercent = Math.floor((Math.random() * 100));
-        if(insertionFloor <= 10) {
+    
+        if(insertionFloor <= 3) {
             insertionChance = Math.floor((Math.random() * 20) + 5);
-        } else if(insertionFloor <= 20) {
-            insertionChance = Math.floor((Math.random() * 20) + 10);
-        } else if(insertionFloor <= 45) {
-            insertionChance = Math.floor((Math.random() * 30) + 20);
-        } else if(insertionFloor <= 60) {
-            insertionChance = Math.floor((Math.random() * 10) + 50);
+        } else if(insertionFloor <= 7) {
+            insertionChance = Math.floor((Math.random() * 15) + 10);
+        } else if(insertionFloor <= 15) {
+            insertionChance = Math.floor((Math.random() * 20) + 15);
+        } else if(insertionFloor <= 30) {
+            insertionChance = Math.floor((Math.random() * 25) + 30);
         } else {
             insertionChance = Math.floor((Math.random() * 20) + 50);
         }
+        
         if(insertionPercent <= insertionChance){
             canInsert = true;
         } else {
             canInsert = false;
         }
         if(canInsert) {
+            console.log(`Limite: ${insertionLimit}`)
             if(quantity <= insertionLimit) {
-                drawLumis();
-               quantity++;
+                if(quantity < insertionLimit) {
+                    quantity++;
+                    drawLumis();
+                    document.getElementById("lumiCount").innerText = quantity;
+                }
             }
             insertionFloorOffset += hits_count;
             console.log("Mais um!")
@@ -108,28 +124,28 @@ function runGame() {
                 drawLumis();
                 if(quantity > 1) {
                     quantity--;
+                    
                 }
                 remotionFloorOffset += hits_count;
                 update()
                 console.log("Menos um!")
                 
                 remotionFloor = Math.floor((Math.random() * 8) + 2);
-    
+                
             }
         }
-
         console.log("Piso: "+ insertionFloor)
         console.log("Chance: "+ insertionChance)
     }
-
+    
     if(hits_count > remotionFloor + remotionFloorOffset) {
        
-
+        
         console.log("Piso: "+ insertionFloor)
         console.log("Chance: "+ insertionChance)
     }
-   //console.log(lumisContainer);
-   console.log("piso: "+insertionFloor);
+    //console.log(lumisContainer);
+    console.log("piso: "+insertionFloor);
 }
 function escape() {
     //alert("oi")
@@ -185,6 +201,7 @@ function update() {
         
     }
     runGame();
+    console.log(`Quantidade: ${quantity}`)
 }
 
 
@@ -204,6 +221,5 @@ function removeLumi(index) {
     console.log("removeu!")
 }
 
-
-
+document.addEventListener("mousedown", () => shotSound.cloneNode(true).play())
 
