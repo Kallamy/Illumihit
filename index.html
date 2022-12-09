@@ -1,10 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Illumihit</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@300&family=Nanum+Gothic:wght@700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -12,9 +16,26 @@
         <div class="lumis">
 
         </div>
-        <span id="lumiCount">0</span>
+        <span id="scoreCount"><span>score: </span><span id="scoreNumber">0</span></span>
+
+        <span id="timerCount">90</span>
+    </div>
+    <div id="menuScreen">
+        <h1 class="menuTitle">Illuminati <span>hit</span></h1>
+        <p class="menuText">conspiracy attack game</p>
+
+        <button class="menuPlayButton">Play</button>
+    </div>
+    
+    <div id="gameOverScreen">
+        <h1 class="gameOverMessage">The time is over!</h1>
+
+        <p class="gameOverScoreText">you scored <span class="scoreText">90</span> points</p>
+
+        <button class="gameOverButton">Back to menu</button>
     </div>
 </body>
-<script src="lumi.js"></script>
-<script src="script.js"></script>
+<script src="./src/classes/Menu.js"></script>
+<script src="./src/classes/Lumi.js"></script>
+<script src="./src/scripts/game_script.js"></script>
 </html>

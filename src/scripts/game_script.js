@@ -1,13 +1,18 @@
-var bgMusic = new Audio('src/sounds/bg_music.mp3');
+const bgMusic = new Audio('src/sounds/bg_music.mp3');
 
 const shotSound = new Audio('src/sounds/shot.wav');
 const hitSound = new Audio('src/sounds/hit.wav');
 const escapeSound = new Audio('src/sounds/escape.wav');
+const gameOverSound = new Audio('src/sounds/game_over.wav');
 
-bgMusic.volume = 0.2;
+bgMusic.volume = 0.5;
+shotSound.volume = 0.2;
 hitSound.volume = 1;
 
-bgMusic.play();
+const menu = new Menu();
+
+menu.startScreen();
+
 //  seleciona a div que contêm os illuminatis
 const lumisContainer = document.querySelector(".lumis");
 // seleciona  todos os illuminatis
@@ -15,7 +20,8 @@ const lumisContainer = document.querySelector(".lumis");
 let lumisObj = [];
 let lumis = [];
 
-
+let isPlaying = false;
+let timerValue = 90;
 let score = 0;
 let hits_count = 0;
 
@@ -36,13 +42,49 @@ let remotionChance = 60;
 
 let respawnTime = Math.floor((Math.random() * 3000) + 1500)
 
+
+function startGame() {
+    isPlaying = true;
+    bgMusic.currentTime = 0;
+    bgMusic.play();
+    timerCount.innerText = String(timerValue);
+    quantity = 3;
+    score = 0;
+}
+
+function timerCountDown() {
+    timerCount = document.getElementById("timerCount");
+    setInterval(() => {
+        if(isPlaying) {
+            timerCount.innerText = String(Number(timerCount.innerText) - 1); 
+        }
+        
+    }, 1800)
+}
+
+function checkGameOver() {
+    setInterval(() => {
+        if(Number(timerCount.innerText) < 0) {
+            bgMusic.pause();
+            document.querySelector(".scoreText").innerText = score;
+            menu.gameOverScreen();
+            gameOverSound.play();
+            timerCount.innerText = "90";
+            isPlaying = false;
+        }
+        
+    }, 500)
+}
+
+timerCountDown();
+checkGameOver();
 drawLumis();
 
 //insere o primeiro illuminati
 function drawLumis() {
     //lumis = document.querySelectorAll(".lumi");
    
-    document.getElementById("lumiCount").innerText = quantity;
+    
     
     console.log("Desenhando....")
     
@@ -62,6 +104,7 @@ function drawLumis() {
         lumisObj[i].move();
     }
     console.log(lumis)
+    
 }
 update()
 runGame()
@@ -97,7 +140,6 @@ function runGame() {
                 if(quantity < insertionLimit) {
                     quantity++;
                     drawLumis();
-                    document.getElementById("lumiCount").innerText = quantity;
                 }
             }
             insertionFloorOffset += hits_count;
@@ -154,11 +196,13 @@ function escape() {
        
         
        setInterval(() => {
-            lumisObj[i].escapeTime = Math.floor((Math.random() * lumisObj[i].escapeLimits[1]) + lumisObj[i].escapeLimits[0])
+            lumisObj[i].escapeTime = Math.floor((Math.random() * lumisObj[i].escapeLimits[1]) + lumisObj[i].escapeLimits[0]);
             console.log(lumisObj[i].escapeTime)
-            lumisObj[i].respawnTime = Math.floor((Math.random() * lumisObj[i].respawnLimits[1]) + lumisObj[i].respawnLimits[0])
-            lumisObj[i].move();
-            update();
+            lumisObj[i].respawnTime = Math.floor((Math.random() * lumisObj[i].respawnLimits[1]) + lumisObj[i].respawnLimits[0]);
+            if(isPlaying) {
+                lumisObj[i].move();
+                update();
+            }
         }, lumisObj[i].escapeTime);
         
     }
@@ -197,7 +241,12 @@ function update() {
 
            
         }
-        
+        if(isPlaying) {
+            if(Number(timerCount.innerText) < 0) {
+                document.getElementById("gameOverScreen").style.display = "block";
+                isPlaying = false;
+            }
+        }
         
     }
     runGame();
@@ -221,5 +270,19 @@ function removeLumi(index) {
     console.log("removeu!")
 }
 
-document.addEventListener("mousedown", () => shotSound.cloneNode(true).play())
+document.addEventListener("mousedown", () => {
+    if(isPlaying) {
+        shotSound.cloneNode(true).play();
+    }
+})
 
+playButton = document.querySelector(".menuPlayButton");
+gameOverButton = document.querySelector(".gameOverButton")
+
+playButton.addEventListener("click", () => {
+    menu.hide();
+    startGame();
+    isPlaying = true;
+})
+
+gameOverButton.addEventListener("click", () => menu.startScreen())
