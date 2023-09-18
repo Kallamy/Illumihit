@@ -5,6 +5,8 @@ const hitSound = new Audio('src/sounds/hit.wav');
 const escapeSound = new Audio('src/sounds/escape.wav');
 const gameOverSound = new Audio('src/sounds/game_over.wav');
 
+// import { random } from "../../Libraries/chancePercent";
+
 bgMusic.volume = 0.5;
 shotSound.volume = 0.2;
 hitSound.volume = 1;
@@ -25,11 +27,11 @@ let timerValue = 90;
 let score = 0;
 let hits_count = 0;
 
-let quantity = 3;
+let quantity = 1;
 
 let canDraw = true;
 
-let insertionLimit = 10;
+let insertionLimit = 100;
 let insertionFloor = Math.floor((Math.random() * 47) + 3);
 let insertionFloorOffset = 0;
 let insertionPercent = Math.floor((Math.random() * 100));
@@ -78,8 +80,7 @@ function checkGameOver() {
 
 timerCountDown();
 checkGameOver();
-drawLumis();
-
+drawLumis()
 //insere o primeiro illuminati
 function drawLumis() {
     //lumis = document.querySelectorAll(".lumi");
@@ -91,9 +92,13 @@ function drawLumis() {
     lumisContainer.innerHTML = "";
     lumisObj = []
 
+
+    console.log("desenhou!!!")
+    
     for(let q = 0; q < quantity; q++) {
         insertLumi()
     }
+
         
    console.log("QUANTIDADE: "+quantity)
 
@@ -102,6 +107,9 @@ function drawLumis() {
     for(let i = 0; i < lumisObj.length; i++) {
 
         lumisObj[i].move();
+
+       // lumisContainer[i].//style.backGroundImage = "url(src/images/lumis/pizza.png)";
+        console.log(lumisContainer[i])
     }
     console.log(lumis)
     
@@ -111,12 +119,11 @@ runGame()
 
 escape()
 function runGame() {
-    
+   
     console.log("Rodou o jogo!")
-    
     if(hits_count > insertionFloor + insertionFloorOffset) {
         insertionPercent = Math.floor((Math.random() * 100));
-    
+
         if(insertionFloor <= 3) {
             insertionChance = Math.floor((Math.random() * 20) + 5);
         } else if(insertionFloor <= 7) {
@@ -140,6 +147,7 @@ function runGame() {
                 if(quantity < insertionLimit) {
                     quantity++;
                     drawLumis();
+                    console.log("Entreou!")
                 }
             }
             insertionFloorOffset += hits_count;
@@ -147,6 +155,9 @@ function runGame() {
             insertionFloor = Math.floor((Math.random() * 47) + 3);
         }
         else {
+            console.log("Entreou!")
+
+            drawLumis();
             remotionPercent = Math.floor((Math.random() * 100));
             if(remotionFloor <= 5) {
                 remotionChance = Math.floor((Math.random() * 20) + 10);
@@ -175,13 +186,14 @@ function runGame() {
                 remotionFloor = Math.floor((Math.random() * 8) + 2);
                 
             }
+            
         }
         console.log("Piso: "+ insertionFloor)
         console.log("Chance: "+ insertionChance)
     }
     
     if(hits_count > remotionFloor + remotionFloorOffset) {
-       
+       //drawLumis()
         
         console.log("Piso: "+ insertionFloor)
         console.log("Chance: "+ insertionChance)
@@ -192,16 +204,18 @@ function runGame() {
 function escape() {
     //alert("oi")
     for (let i = 0; i < lumisObj.length; i++) {
-
-       
         
-       setInterval(() => {
+        setInterval(() => {
             lumisObj[i].escapeTime = Math.floor((Math.random() * lumisObj[i].escapeLimits[1]) + lumisObj[i].escapeLimits[0]);
-            console.log(lumisObj[i].escapeTime)
             lumisObj[i].respawnTime = Math.floor((Math.random() * lumisObj[i].respawnLimits[1]) + lumisObj[i].respawnLimits[0]);
             if(isPlaying) {
-                lumisObj[i].move();
                 update();
+                if(lumisObj[i].hitted) {
+                    lumisObj[i].move();
+                } else {
+                    
+                    timerCount.innerText = Number(timerCount.innerText) - 1;
+                }
             }
         }, lumisObj[i].escapeTime);
         
@@ -230,9 +244,16 @@ function update() {
             lumis[i].classList.add("hit")
             lumisObj[i].canMove = false;
             lumisObj[i].hit(i);
+            
             setTimeout(() => {
-              lumis[i].classList.remove("hit")
-              canDraw = true;
+                
+                lumis[i].classList.remove("hit")
+                canDraw = true;
+                /* if(lumis[i].classList.contains("hit")) {
+                    lumis[i].style.display = "none";
+                } */
+               // lumis[i].style.display = "block";
+
             }, 1000)
             
         })
@@ -249,19 +270,34 @@ function update() {
         }
         
     }
+
+    // Adiciona a classe que define a imagem dos illuminatis
+    for(var i=0; i<lumisObj.length; i++) {
+        if(lumisContainer.childNodes[i].classList.contains("pizza")) {
+            lumisContainer.childNodes[i].classList.remove("pizza")
+        }
+        if(lumisContainer.childNodes[i].classList.contains("massonary")) {
+            lumisContainer.childNodes[i].classList.remove("massonary")
+        }
+        if(lumisContainer.childNodes[i].classList.contains("bill")) {
+            lumisContainer.childNodes[i].classList.remove("bill")
+        }
+        lumisContainer.childNodes[i].classList.add(lumisObj[i].type);
+    }
     runGame();
-    console.log(`Quantidade: ${quantity}`)
 }
 
 
 // Inserir um novo illuminati
 function insertLumi() {
-
-    
-    lumisContainer.innerHTML += "<div class='lumi'></div>";
-    newLumi = new Lumi()
-    lumisObj.push(newLumi);
    
+
+    newLumi = new Lumi();
+    
+    lumisContainer.innerHTML += `<div class='lumi'></div>`;
+    lumisObj.push(newLumi);
+ 
+    
 }
 
 // Remover um illuminati
